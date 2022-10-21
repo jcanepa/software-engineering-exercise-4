@@ -2,7 +2,7 @@
 
 Application of principles from chapters 7 and 8 of Bob Martin's Clean Code:
 
-## Original snippeets:
+## Original code snippets:
 
 ### Part 1
 
