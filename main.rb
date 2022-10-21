@@ -3,68 +3,68 @@
 class MentalState
   def auditable?
     # true if the external service is online, otherwise false
-    begin
-      audit!
-    rescue RuntimeError
-      false
-    else
-      true
-    end
+
+    audit!
+  rescue RuntimeError
+    false
+  else
+    true
   end
 
   def audit!
     # Could fail if external service is offline
-    raise RuntimeError unless risky_external_request()
+    raise RuntimeError unless risky_external_request
 
-  def do_work
-    audit! if auditable?
+    def do_work
+      audit! if auditable?
+    end
   end
-end
 
-def audit_sanity(bedtime_mental_state)
-  return 0 unless bedtime_mental_state.auditable?
+  def audit_sanity(bedtime_mental_state)
+    return 0 unless bedtime_mental_state.auditable?
 
-  if bedtime_mental_state.audit!.ok?
-    MorningMentalState.new(:ok)
+    if bedtime_mental_state.audit!.ok?
+      MorningMentalState.new(:ok)
+    else
+      MorningMentalState.new(:not_ok)
+    end
+  end
+
+  if audit_sanity(bedtime_mental_state) == 0
+    puts 'error'
   else
-    MorningMentalState.new(:not_ok)
+    new_state = audit_sanity(bedtime_mental_state)
   end
-end
 
-if audit_sanity(bedtime_mental_state) == 0
-  puts 'error'
-else
+  # Exercise 5 Part 2 (Don't Return Null / Null Object Pattern)
+
+  class BedtimeMentalState < MentalState; end
+
+  class MorningMentalState < MentalState; end
+
+  def audit_sanity(bedtime_mental_state)
+    return nil unless bedtime_mental_state.auditable?
+
+    if bedtime_mental_state.audit!.ok?
+      MorningMentalState.new(:ok)
+    else
+      MorningMentalState.new(:not_ok)
+    end
+  end
+
   new_state = audit_sanity(bedtime_mental_state)
-end
+  new_state.do_work
 
-# Exercise 5 Part 2 (Don't Return Null / Null Object Pattern)
+  # Exercise 5 Part 3 (Wrapping APIs)
 
-class BedtimeMentalState < MentalState; end
+  require 'candy_service'
 
-class MorningMentalState < MentalState; end
+  machine = CandyMachine.new
+  machine.prepare
 
-def audit_sanity(bedtime_mental_state)
-  return nil unless bedtime_mental_state.auditable?
-
-  if bedtime_mental_state.audit!.ok?
-    MorningMentalState.new(:ok)
+  if machine.ready?
+    machine.make!
   else
-    MorningMentalState.new(:not_ok)
+    puts 'sadness'
   end
-end
-
-new_state = audit_sanity(bedtime_mental_state)
-new_state.do_work
-
-# Exercise 5 Part 3 (Wrapping APIs)
-
-require 'candy_service'
-
-machine = CandyMachine.new
-machine.prepare
-
-if machine.ready?
-  machine.make!
-else
-  puts 'sadness'
 end
