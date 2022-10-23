@@ -1,9 +1,10 @@
 # Exercise 5 Part 1 (Exception Handling)
 
 class MentalState
-  def auditable?
-    # true if the external service is online, otherwise false
+  def initialize(status); end
 
+  # true if the external service is online, otherwise false
+  def auditable?
     audit!
   rescue RuntimeError
     false
@@ -14,57 +15,79 @@ class MentalState
   def audit!
     # Could fail if external service is offline
     raise RuntimeError unless risky_external_request
-
-    def do_work
-      audit! if auditable?
-    end
   end
 
-  def audit_sanity(bedtime_mental_state)
-    return 0 unless bedtime_mental_state.auditable?
-
-    if bedtime_mental_state.audit!.ok?
-      MorningMentalState.new(:ok)
-    else
-      MorningMentalState.new(:not_ok)
-    end
+  def do_work
+    audit! if auditable?
   end
+end
 
-  if audit_sanity(bedtime_mental_state) == 0
-    puts 'error'
+# hard to tell what's being asked here, but
+# I'm choosing not to throw an exception on the caller
+# because this is already being gracefully handled inside the class
+def audit_sanity(bedtime_mental_state)
+  raise RuntimeError unless bedtime_mental_state.auditable?
+  if bedtime_mental_state.audit!.ok?
+    MorningMentalState.new(:ok)
   else
-    new_state = audit_sanity(bedtime_mental_state)
+    MorningMentalState.new(:not_ok)
   end
+end
 
-  # Exercise 5 Part 2 (Don't Return Null / Null Object Pattern)
+audit_sanity(bedtime_mental_state)
 
-  class BedtimeMentalState < MentalState; end
 
-  class MorningMentalState < MentalState; end
 
-  def audit_sanity(bedtime_mental_state)
-    return nil unless bedtime_mental_state.auditable?
+# Exercise 5 Part 2 (Don't Return Null / Null Object Pattern)
 
-    if bedtime_mental_state.audit!.ok?
-      MorningMentalState.new(:ok)
-    else
-      MorningMentalState.new(:not_ok)
-    end
-  end
+class BedtimeMentalState < MentalState; end
 
-  new_state = audit_sanity(bedtime_mental_state)
-  new_state.do_work
+class MorningMentalState < MentalState; end
 
-  # Exercise 5 Part 3 (Wrapping APIs)
+def audit_sanity(bedtime_mental_state)
+  return nil unless bedtime_mental_state.auditable?
 
-  require 'candy_service'
-
-  machine = CandyMachine.new
-  machine.prepare
-
-  if machine.ready?
-    machine.make!
+  if bedtime_mental_state.audit!.ok?
+    MorningMentalState.new(:ok)
   else
-    puts 'sadness'
+    MorningMentalState.new(:not_ok)
+  end
+end
+
+new_state = audit_sanity(bedtime_mental_state)
+new_state.do_work
+
+
+# Exercise 5 Part 3 (Wrapping APIs)
+
+require 'candy_service'
+
+# machine = CandyMachine.new
+machine = CandyServiceWrapper.new
+machine.prepare
+
+if machine.ready?
+  machine.make!
+else
+  puts 'sadness'
+end
+
+  class CandyServiceWrapper
+  @machine
+
+  def initialize:
+    @machine = CandyMachine.new
+  end
+
+  def prepare:
+    @machine.prepare
+  end
+
+  def ready?
+    return @machine.ready?
+  end
+
+  def make!
+    return @machine.make!
   end
 end
