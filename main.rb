@@ -18,20 +18,17 @@ class MentalState
   end
 
   def do_work
-    audit! if auditable?
+    # Amazing stuff...
   end
 end
 
 # hard to tell what's being asked here, but
-# I'm choosing not to throw an exception on the caller
+# I'm choosing not to throw an exception within this caller
 # because this is already being gracefully handled inside the class
 def audit_sanity(bedtime_mental_state)
-  raise RuntimeError unless bedtime_mental_state.auditable?
-  if bedtime_mental_state.audit!.ok?
-    MorningMentalState.new(:ok)
-  else
-    MorningMentalState.new(:not_ok)
-  end
+  return bedtime_mental_state.auditable?
+    ? return MorningMentalState.new(:ok)
+    : MorningMentalState.new(:not_ok)
 end
 
 audit_sanity(bedtime_mental_state)
