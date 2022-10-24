@@ -66,7 +66,6 @@ audit_sanity(
 # main.rb
 require 'candy_service_wrapper'
 
-# machine = CandyMachine.new
 machine = CandyServiceWrapper.new
 machine.prepare
 
