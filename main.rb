@@ -12,6 +12,7 @@ class MentalState
     else
       true
     end
+  end
 
   def audit!
     # Could fail if external service is offline
