@@ -63,7 +63,8 @@ audit_sanity(
 
 # Exercise 5 Part 3 (Wrapping APIs)
 
-require 'candy_service'
+# main.rb
+require 'candy_service_wrapper'
 
 # machine = CandyMachine.new
 machine = CandyServiceWrapper.new
@@ -75,6 +76,7 @@ else
   puts 'sadness'
 end
 
+# candy_service_wrapper.rb
 class CandyServiceWrapper
   @machine
 
