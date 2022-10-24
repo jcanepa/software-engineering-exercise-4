@@ -57,6 +57,7 @@ def audit_sanity(bedtime_mental_state)
     : MorningMentalState.new(:not_ok)
 end
 
+# now the object can be evoked immediately without any nil checking 🎉
 audit_sanity(
   bedtime_mental_state).do_work
 
