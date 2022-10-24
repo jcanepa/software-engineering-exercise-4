@@ -14,8 +14,8 @@ class MentalState
     end
   end
 
+  # Could fail if external service is offline
   def audit!
-    # Could fail if external service is offline
     raise RuntimeError unless risky_external_request()
   end
 
