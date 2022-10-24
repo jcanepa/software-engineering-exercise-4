@@ -50,15 +50,13 @@ end
 def audit_sanity(bedtime_mental_state)
   NullMentalState.new unless bedtime_mental_state.auditable?
 
-  if bedtime_mental_state.audit!.ok?
-    MorningMentalState.new(:ok)
-  else
-    MorningMentalState.new(:not_ok)
-  end
+  bedtime_mental_state.auditable?
+    ? MorningMentalState.new(:ok)
+    : MorningMentalState.new(:not_ok)
 end
 
-new_state = audit_sanity(bedtime_mental_state)
-new_state.do_work
+audit_sanity(
+  bedtime_mental_state).do_work
 
 
 # Exercise 5 Part 3 (Wrapping APIs)
