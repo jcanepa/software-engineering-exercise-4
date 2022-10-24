@@ -5,16 +5,17 @@ class MentalState
 
   # true if the external service is online, otherwise false
   def auditable?
-    audit!
-  rescue RuntimeError
-    false
-  else
-    true
-  end
+    begin
+      audit!
+    rescue RuntimeError
+      false
+    else
+      true
+    end
 
   def audit!
     # Could fail if external service is offline
-    raise RuntimeError unless risky_external_request
+    raise RuntimeError unless risky_external_request()
   end
 
   def do_work
@@ -73,7 +74,7 @@ else
   puts 'sadness'
 end
 
-  class CandyServiceWrapper
+class CandyServiceWrapper
   @machine
 
   def initialize:
