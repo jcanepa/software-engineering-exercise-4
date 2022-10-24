@@ -22,12 +22,11 @@ class MentalState
   end
 end
 
-# hard to tell what's being asked here, but
 # I'm choosing not to throw an exception within this caller
 # because this is already being gracefully handled inside the class
 def audit_sanity(bedtime_mental_state)
-  return bedtime_mental_state.auditable?
-    ? return MorningMentalState.new(:ok)
+  bedtime_mental_state.auditable?
+    ? MorningMentalState.new(:ok)
     : MorningMentalState.new(:not_ok)
 end
 
@@ -41,8 +40,15 @@ class BedtimeMentalState < MentalState; end
 
 class MorningMentalState < MentalState; end
 
+class NullMentalState < MentalState
+  def initialize(status); end
+  def auditable?; end
+  def audit!; end
+  def do_work; end
+end
+
 def audit_sanity(bedtime_mental_state)
-  return nil unless bedtime_mental_state.auditable?
+  NullMentalState.new unless bedtime_mental_state.auditable?
 
   if bedtime_mental_state.audit!.ok?
     MorningMentalState.new(:ok)
